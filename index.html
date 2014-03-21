@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>TODO</title>
+    <link rel="stylesheet" href="assets/css/topcoat-desktop-light.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+  </head>
+  <body>
+    <header>
+      <h1>TODO</h1>
+    </header>
+    <div rel="input-container" class="todo-input-container">
+      <input
+          type="text"
+          placeholder="Give the cat a bath..."
+          class="topcoat-text-input--large long-entry"
+          name="todo-entry">
+    </div>
+    <div rel="new-item" class="todo-new-item">
+      {{ text }}
+    </div>
+    <div
+        rel="items-container"
+        class="todo-items-container"
+        altr-for="item in items">
+      <div data-id="{{ item.id }}" class="todo-item {{ item.status }}">
+        <button class="topcoat-icon-button" rel="remove">
+          X
+        </button>
+        <button class="topcoat-icon-button" rel="toggle">
+          @
+        </button>
+        {{ item.text }}
+      </div>
+    </div>
+    <script src="assets/js/bundle.js"></script>
+  </body>
+</html>

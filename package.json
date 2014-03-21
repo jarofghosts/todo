@@ -1,0 +1,28 @@
+{
+  "name": "todo",
+  "version": "0.0.0",
+  "description": "todo app",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify -e index.js --dg=false > assets/js/bundle.js",
+    "dev": "beefy index.js:assets/js/bundle.js --live --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "todo"
+  ],
+  "author": "jesse keane",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^3.33.0",
+    "beefy": "^1.1.0"
+  },
+  "dependencies": {
+    "through": "^2.3.4",
+    "altr": "0.0.8",
+    "dom-replace-html-stream": "0.0.1",
+    "dom-value-stream": "0.0.1",
+    "dom-event-stream": "0.0.1"
+  }
+}

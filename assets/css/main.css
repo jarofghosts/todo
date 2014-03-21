@@ -1,0 +1,26 @@
+header {
+  margin: 2em;
+}
+.long-entry {
+  width: 500px;
+}
+.todo-item {
+  display: block;
+  width: 500px;
+  background: #ccc;
+  padding: 1em;
+  font-size: 1.1em;
+}
+.todo-item.incomplete {
+  color: #222;
+}
+.todo-item.complete {
+  color: #999;
+}
+.todo-new-item {
+  padding: 1em;
+  background: #f0f0f0;
+  width: 500px;
+  display: block;
+  font-size: 1.2em;
+}
