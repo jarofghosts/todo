@@ -38,7 +38,6 @@ function write_new_item(data) {
 }
 
 function write_items(data) {
-  console.log({items: data})
   items_template.update({items: data})
 }
 
