@@ -11,7 +11,7 @@ header {
   display: block;
   background: #ccc;
   padding: 1em;
-  font-size: 1.1em;
+  font-size: 1.4em;
 }
 .todo-item:last-child {
   border-bottom: 1px solid #444;
@@ -31,7 +31,7 @@ header {
   background: #f0f0f0;
   height: 25px;
   display: block;
-  font-size: 1.2em;
+  font-size: 1.5em;
 }
 .text-complete {
   text-decoration: line-through;
