@@ -28,6 +28,8 @@ var new_item_stream = through(write_new_item)
 
 var key_stream = event_stream(input_el, 'keyup')
 
+input_el.focus()
+
 key_stream.on('data', check_key)
 
 db.createReadStream().pipe(decode_stream).pipe(add_stream)

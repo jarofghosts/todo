@@ -2,25 +2,40 @@ header {
   margin: 2em;
 }
 .long-entry {
-  width: 500px;
+  width: 100%;
 }
 .todo-item {
+  -webkit-transition: all .5s ease-out;
+  transition: all .5s ease-out;
+  border-top: 1px solid #444;
   display: block;
-  width: 500px;
   background: #ccc;
   padding: 1em;
   font-size: 1.1em;
+}
+.todo-item:last-child {
+  border-bottom: 1px solid #444;
+}
+.todo-item > span {
+  display: inline-block;
+  margin-left: 3em;
 }
 .todo-item.incomplete {
   color: #222;
 }
 .todo-item.complete {
-  color: #999;
+  color: #888;
 }
 .todo-new-item {
   padding: 1em;
   background: #f0f0f0;
-  width: 500px;
+  height: 25px;
   display: block;
   font-size: 1.2em;
+}
+.text-complete {
+  text-decoration: line-through;
+}
+.text-incomplete {
+  font-weight: 400;
 }
