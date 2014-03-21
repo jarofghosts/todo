@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "through": "^2.3.4",
-    "altr": "0.0.8",
+    "altr": "0.0.10",
     "dom-replace-html-stream": "0.0.1",
     "dom-value-stream": "0.0.1",
     "dom-event-stream": "0.0.1"
