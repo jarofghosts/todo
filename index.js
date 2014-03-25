@@ -9,8 +9,7 @@ var event_stream = require('dom-event-stream')
 
 var db = levelup('/lol', {db: setup_local_storage, valueEncoding: 'json'})
 
-var attribute_lookup = require('./lib/attribute-lookup')
-  , todo_stream = require('./lib/todo')()
+var todo_stream = require('./lib/todo')()
 
 var items_el = document.querySelector('[rel=items-container]')
   , items_template = altr(items_el)
@@ -77,7 +76,7 @@ function check_button(ev) {
   ev.preventDefault()
 
   var el = ev.target
-  var rel = attribute_lookup(el, 'rel')
+  var rel = el.getAttribute('rel')
 
   if (!rel) return
 
@@ -87,14 +86,14 @@ function check_button(ev) {
   }[rel] || noop)()
 
   function remove_item() {
-    var id = attribute_lookup(el.parentNode, 'data-id')
+    var id = el.parentNode.getAttribute('data-id')
 
     db.del(id)
     todo_stream.remove(id)
   }
 
   function toggle_status() {
-    var item = todo_stream.get(attribute_lookup(el.parentNode, 'data-id'))
+    var item = todo_stream.get(el.parentNode.getAttribute('data-id'))
     item.status = item.status === 'complete' ? 'incomplete' : 'complete'
 
     db.put(item.id, item)
