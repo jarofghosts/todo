@@ -18,19 +18,17 @@ var new_item_el = document.querySelector('[rel=new-item]')
   , new_item_template = altr(new_item_el)
 
 new_item_template.stream = through(function(data) {
-  new_item_template.update(data)
+  new_item_template.update({text: data})
 })
 
 items_template.stream = through(function(data) {
-  items_template.update(data)
+  items_template.update({items: data})
 })
 
 var input_el = document.querySelector('[name=todo-entry]')
 
-var new_item_stream = through(write_new_item)
-  , decode_stream = dotpath_stream('value')
+var decode_stream = dotpath_stream('value')
   , add_stream = through(add_item, noop)
-  , items_stream = through(write_items)
 
 var key_stream = event_stream(input_el, 'keyup')
 
@@ -42,10 +40,9 @@ db.createReadStream().pipe(decode_stream).pipe(add_stream)
 
 key_stream
   .pipe(value_stream())
-  .pipe(new_item_stream)
   .pipe(new_item_template.stream)
 
-todo_stream.pipe(items_stream).pipe(items_template.stream)
+todo_stream.pipe(items_template.stream)
 
 new_item_template.update({text: ''})
 items_template.update({items: []})
@@ -53,14 +50,6 @@ items_el.addEventListener('click', check_button, false)
 
 function add_item(data) {
   todo_stream.add(data)
-}
-
-function write_new_item(data) {
-  new_item_stream.queue({text: data})
-}
-
-function write_items(data) {
-  items_stream.queue({items: data})
 }
 
 function check_key(ev) {
