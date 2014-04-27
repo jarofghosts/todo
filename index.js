@@ -17,6 +17,14 @@ var items_el = document.querySelector('[rel=items-container]')
 var new_item_el = document.querySelector('[rel=new-item]')
   , new_item_template = altr(new_item_el)
 
+new_item_template.stream = through(function(data) {
+  new_item_template.update(data)
+})
+
+items_template.stream = through(function(data) {
+  items_template.update(data)
+})
+
 var input_el = document.querySelector('[name=todo-entry]')
 
 var new_item_stream = through(write_new_item)
@@ -58,7 +66,7 @@ function write_items(data) {
 function check_key(ev) {
   var key = ev.which || ev.charCode || ev.keyCode
 
-  if (key !== 13 || !input_el.value.length) return
+  if(key !== 13 || !input_el.value.length) return
 
   var data = {
       id: uuid.v4()
@@ -78,7 +86,7 @@ function check_button(ev) {
   var el = ev.target
   var rel = el.getAttribute('rel')
 
-  if (!rel) return
+  if(!rel) return
 
   ({
       'remove': remove_item

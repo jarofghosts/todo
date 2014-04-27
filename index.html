@@ -16,8 +16,7 @@
           class="topcoat-text-input--large long-entry"
           name="todo-entry">
     </div>
-    <div rel="new-item" class="todo-new-item">
-      {{ text }}
+    <div rel="new-item" class="todo-new-item" altr-text="text">
     </div>
     <div
         rel="items-container"
@@ -30,7 +29,7 @@
         <button class="topcoat-icon-button" rel="toggle">
           &#10003;
         </button>
-        <span class="text-{{ item.status }}">{{ item.text }}</span>
+        <span class="text-{{ item.status }}" altr-text="item.text"></span>
       </div>
     </div>
     <script src="assets/js/bundle.js"></script>
