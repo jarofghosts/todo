@@ -89,10 +89,8 @@ function check_button(ev) {
 
   if(!rel) return
 
-  ({
-      'remove': remove_item
-    , 'toggle': toggle_status
-  }[rel] || noop)()
+  if(rel === 'remove') return remove_item()
+  if(rel === 'toggle') return toggle_status()
 
   function remove_item() {
     var id = el.parentNode.getAttribute('data-id')
