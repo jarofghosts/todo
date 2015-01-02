@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "altr": "^0.2.0",
-    "dom-event-stream": "0.0.1",
-    "dom-replace-html-stream": "0.0.1",
+    "dom-delegation-stream": "0.0.0",
     "dom-value-stream": "0.0.1",
     "dotpath-stream": "0.0.0",
     "levelup": "0.18.2",
     "localstorage-down": "0.4.0",
-    "through": "2.3.4",
-    "uuid": "1.4.1"
+    "objectstate": "^2.0.0",
+    "through": "^2.3.4",
+    "uuid": "^1.4.1"
   }
 }

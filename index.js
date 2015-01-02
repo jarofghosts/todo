@@ -1,15 +1,22 @@
-var eventStream = require('dom-event-stream')
-  , valueStream = require('dom-value-stream')
-  , dotpathStream = require('dotpath-stream')
+var events = require('dom-delegation-stream')
   , Leveldown = require('localstorage-down')
+  , values = require('dom-value-stream')
+  , dotpath = require('dotpath-stream')
+  , objectstate = require('objectstate')
   , through = require('through')
   , levelup = require('levelup')
-  , altr = require('altr')
   , uuid = require('uuid')
 
-var db = levelup('/lol', {db: setupLocalStorage, valueEncoding: 'json'})
+var namespace = require('./lib/namespace-stream')
+  , dbStream = require('./lib/db-stream.js')
+  , altr = require('./lib/altr-stream')
+  , todo = require('./lib/todo')
 
-var todo = require('./lib/todo')
+var db = levelup('/lol', {db: setupLocalStorage, valueEncoding: 'json'})
+  , state = objectstate()
+  , todoStream = todo()
+
+var decodeStream = dotpath('value')
 
 var itemsEl = document.querySelector('[rel=items-container]')
   , itemsTemplate = altr(itemsEl)
@@ -17,86 +24,73 @@ var itemsEl = document.querySelector('[rel=items-container]')
 var newItemEl = document.querySelector('[rel=new-item]')
   , newItemTemplate = altr(newItemEl)
 
-newItemTemplate.stream = through(function(data) {
-  newItemTemplate.update({text: data})
-})
-
-var todoStream = todo()
-
-itemsTemplate.stream = through(function(data) {
-  itemsTemplate.update({items: data})
-})
-
 var inputEl = document.querySelector('[name=todo-entry]')
+  , keyStream = events(inputEl, 'keyup')
 
-var addStream = through(addItem, Function())
-  , decodeStream = dotpathStream('value')
+var newItems = keyStream.pipe(gateStream())
 
-var keyStream = eventStream(inputEl, 'keyup')
+newItems.pipe(dbStream(db))
+newItems.pipe(through(todoStream.add.bind(todoStream)))
 
+newItems.on('data', clearInputs)
+
+events(itemsEl, 'click', '[rel=remove]').on('data', removeItem)
+events(itemsEl, 'click', '[rel=toggle]').on('data', toggleStatus)
+
+clearInputs()
 inputEl.focus()
+itemsTemplate.write({items: []})
 
-keyStream.on('data', checkKey)
+state.listen(keyStream.pipe(values()), 'text')
 
-db.createReadStream().pipe(decodeStream).pipe(addStream)
+state.pipe(newItemTemplate)
 
-keyStream
-  .pipe(valueStream())
-  .pipe(newItemTemplate.stream)
+todoStream.pipe(namespace('items')).pipe(itemsTemplate)
 
-todoStream.pipe(itemsTemplate.stream)
+db.createReadStream()
+  .pipe(decodeStream)
+  .pipe(through(todoStream.add.bind(todoStream)))
 
-newItemTemplate.update({text: ''})
-itemsTemplate.update({items: []})
-itemsEl.addEventListener('click', checkButton, false)
-
-function addItem(data) {
-  todoStream.add(data)
-}
-
-function checkKey(ev) {
-  var key = ev.which || ev.charCode || ev.keyCode
-
-  if(key !== 13 || !inputEl.value.length) return
-
-  var data = {
-      id: uuid.v4()
-    , text: inputEl.value
-    , status: 'incomplete'
-  }
-
-  db.put(data.id, data)
-  addStream.write(data)
-
+function clearInputs() {
   inputEl.value = ''
+  state.set('text', '')
 }
 
-function checkButton(ev) {
-  ev.preventDefault()
+function gateStream() {
+  var stream = through(write)
 
-  var el = ev.target
-  var rel = el.getAttribute('rel')
+  return stream
 
-  if(!rel) return
+  function write(ev) {
+    var key = ev.which || ev.charCode || ev.keyCode
+      , text = state.get('text')
 
-  if(rel === 'remove') return removeItem()
-  if(rel === 'toggle') return toggleStatus()
+    if(key !== 13 || !text.length) return
 
-  function removeItem() {
-    var id = el.parentNode.getAttribute('data-id')
+    var data = {
+        id: uuid.v4()
+      , text: text
+      , status: 'incomplete'
+    }
 
-    db.del(id)
-    todoStream.remove(id)
+    stream.queue(data)
   }
+}
 
-  function toggleStatus() {
-    var item = todoStream.get(el.parentNode.getAttribute('data-id'))
+function removeItem(ev) {
+  var id = ev.target.parentNode.getAttribute('data-id')
 
-    item.status = item.status === 'complete' ? 'incomplete' : 'complete'
+  db.del(id)
+  todoStream.remove(id)
+}
 
-    db.put(item.id, item)
-    todoStream.update(item)
-  }
+function toggleStatus(ev) {
+  var item = todoStream.get(ev.target.parentNode.getAttribute('data-id'))
+
+  item.status = item.status === 'complete' ? 'incomplete' : 'complete'
+
+  db.put(item.id, item)
+  todoStream.update(item)
 }
 
 function setupLocalStorage(location) {
